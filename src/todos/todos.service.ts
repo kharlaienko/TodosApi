@@ -20,8 +20,8 @@ export class TodosService {
     })
   }
 
-  findAll() {
-    return this.repository.find()
+  findAll(userId: number) {
+    return this.repository.find({ where: { user: { id: userId } } })
   }
 
   async findOne(id: number) {

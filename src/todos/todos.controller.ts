@@ -9,12 +9,12 @@ export class TodosController {
 
   @Post()
   create(@Body() dto: CreateTodoDto) {
-    return this.todosService.create(dto, 2);//TODO: GET ID FROM USER TOKEN
+    return this.todosService.create(dto, 1);//TODO: GET ID FROM USER TOKEN
   }
 
   @Get()
   findAll() {
-    return this.todosService.findAll();
+    return this.todosService.findAll(1);
   }
 
   @Get(':id')
