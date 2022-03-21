@@ -1,4 +1,3 @@
-import { TodoEntity } from './../todos/entities/todo.entity';
 import { UserEntity } from './entities/user.entity';
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
@@ -37,11 +36,28 @@ export class UsersService {
     return user
   }
 
-  update(id: number, updateUserDto: UpdateUserDto) {
-    return `This action updates a #${id} user`;
+  async update(id: number, dto: UpdateUserDto) {
+    let user;
+
+    try {
+      user = await this.repository.findOneByOrFail({ id })
+    } catch (e) {
+      throw new BadRequestException('User was not found')
+    }
+
+    return this.repository.update(id, {
+      userName: dto.userName
+    })
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} user`;
+  async remove(id: number) {
+    let user;
+    try {
+      user = await this.repository.findOneByOrFail({ id })
+    } catch (e) {
+      throw new BadRequestException('User was not found')
+    }
+
+    return this.repository.delete(id)
   }
 }

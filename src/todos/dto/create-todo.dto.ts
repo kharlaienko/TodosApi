@@ -1,4 +1,5 @@
-import { IsNotEmpty, IsOptional, IsString, Length } from "class-validator";
+import { IsNotEmpty, IsOptional, IsString, Length, Matches } from "class-validator";
+import { TodoPriority } from "../entities/todo.entity";
 
 export class CreateTodoDto {
    @IsNotEmpty()
@@ -10,4 +11,9 @@ export class CreateTodoDto {
    @IsString()
    @Length(3)
    description?: string
+
+   @IsOptional()
+   @IsString()
+   @Matches(new RegExp(`${TodoPriority.HIGHT}|${TodoPriority.MEDIUM}|${TodoPriority.LOW}`))
+   priority?: TodoPriority
 }

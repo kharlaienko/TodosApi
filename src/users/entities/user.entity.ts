@@ -1,3 +1,4 @@
+import { CategoryEntity } from './../../categories/entities/category.entity';
 import { TodoEntity } from './../../todos/entities/todo.entity';
 import { Column, CreateDateColumn, Entity, JoinColumn, JoinTable, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
 
@@ -17,6 +18,9 @@ export class UserEntity {
 
    @OneToMany(() => TodoEntity, (todo) => todo.user)
    todos: TodoEntity[]
+
+   @OneToMany(() => CategoryEntity, (category) => category.user)
+   categories: CategoryEntity[]
 
    @CreateDateColumn()
    createdAt: Date

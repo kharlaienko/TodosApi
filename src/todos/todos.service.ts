@@ -39,13 +39,14 @@ export class TodosService {
     try {
       todo = await this.repository.findOneByOrFail({ id })
     } catch (e) {
-      throw new BadRequestException('Cannot Update')
+      throw new BadRequestException('Todo is not exist')
     }
 
     return await this.repository.update(id, {
       title: dto.title || todo.title,
       description: dto.description || todo.description,
-      isComplete: dto.isComplete ?? todo.isComplete
+      isComplete: dto.isComplete ?? todo.isComplete,
+      priority: dto.priority || todo.priority
     })
   }
 
@@ -55,7 +56,7 @@ export class TodosService {
     try {
       todo = await this.repository.findOneByOrFail({ id })
     } catch (e) {
-      throw new BadRequestException('Cannot Delete')
+      throw new BadRequestException('Cannot delete. Todo is not found.')
     }
 
     return this.repository.delete(id)

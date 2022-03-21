@@ -1,6 +1,6 @@
-import { TodoEntity } from './../entities/todo.entity';
+import { TodoEntity, TodoPriority } from './../entities/todo.entity';
 import { PartialType } from '@nestjs/mapped-types';
-import { IsBoolean, IsOptional, IsString, Length } from 'class-validator';
+import { IsBoolean, IsOptional, IsString, Length, Matches } from 'class-validator';
 
 export class UpdateTodoDto extends PartialType(TodoEntity) {
    @IsOptional()
@@ -16,4 +16,9 @@ export class UpdateTodoDto extends PartialType(TodoEntity) {
    @IsOptional()
    @IsBoolean()
    isComplete?: boolean;
+
+   @IsOptional()
+   @IsString()
+   @Matches(new RegExp(`${TodoPriority.HIGHT}|${TodoPriority.MEDIUM}|${TodoPriority.LOW}`))
+   priority?: TodoPriority
 }

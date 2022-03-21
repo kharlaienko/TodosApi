@@ -6,5 +6,5 @@ export class UpdateUserDto extends PartialType(CreateUserDto) {
    @IsNotEmpty()
    @IsString()
    @Length(6, 100)
-   fullName?: string;
+   userName?: string;
 }

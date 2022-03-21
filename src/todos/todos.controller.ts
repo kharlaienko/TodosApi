@@ -13,8 +13,8 @@ export class TodosController {
   }
 
   @Get()
-  findAll() {
-    return this.todosService.findAll(1);
+  findAllUsersTodo() {
+    return this.todosService.findAll(1);//TODO: GET ID FROM USER TOKEN
   }
 
   @Get(':id')
