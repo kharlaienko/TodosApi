@@ -10,10 +10,10 @@ export class CategoryEntity {
    @Column()
    title: string;
 
-   @OneToMany(() => TodoEntity, (todo) => todo.category)
+   @OneToMany(() => TodoEntity, (todo) => todo.category, { nullable: true })
    todos: TodoEntity[]
 
-   @ManyToOne(() => UserEntity, (user) => user.categories, { nullable: true, onDelete: 'CASCADE' })
+   @ManyToOne(() => UserEntity, (user) => user.categories, { nullable: false, onDelete: 'CASCADE' })
    @JoinColumn()
    user: UserEntity
 

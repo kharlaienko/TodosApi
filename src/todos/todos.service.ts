@@ -1,4 +1,4 @@
-import { TodoEntity } from './entities/todo.entity';
+import { TodoEntity, TodoPriority } from './entities/todo.entity';
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { CreateTodoDto } from './dto/create-todo.dto';
@@ -17,6 +17,7 @@ export class TodosService {
       user: { id: userId },
       title: dto.title,
       description: dto.description || null,
+      priority: dto.priority || TodoPriority.LOW,
     })
   }
 
@@ -46,7 +47,8 @@ export class TodosService {
       title: dto.title || todo.title,
       description: dto.description || todo.description,
       isComplete: dto.isComplete ?? todo.isComplete,
-      priority: dto.priority || todo.priority
+      priority: dto.priority || todo.priority,
+      category: { id: dto.categoryId } || todo.category.id
     })
   }
 
