@@ -1,3 +1,4 @@
+import { AuthModule } from './auth/auth.module';
 import { CategoryEntity } from './categories/entities/category.entity';
 import { UserEntity } from './users/entities/user.entity';
 import { TodoEntity } from './todos/entities/todo.entity';
@@ -8,9 +9,14 @@ import { AppService } from './app.service';
 import { TodosModule } from './todos/todos.module';
 import { UsersModule } from './users/users.module';
 import { CategoriesModule } from './categories/categories.module';
+import { ConfigModule } from '@nestjs/config';
 
 @Module({
   imports: [
+    ConfigModule.forRoot({
+      isGlobal: true,
+      ignoreEnvVars: true
+    }),
     TypeOrmModule.forRoot({
       type: 'postgres',
       host: 'localhost',
@@ -23,7 +29,9 @@ import { CategoriesModule } from './categories/categories.module';
     }),
     TodosModule,
     UsersModule,
-    CategoriesModule,],
+    CategoriesModule,
+    AuthModule
+  ],
   controllers: [AppController],
   providers: [AppService],
 })
