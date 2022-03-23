@@ -23,8 +23,8 @@ export class AuthService {
     return null;
   }
 
-  async signJWT(user) {
-    const payload = { sub: user.id };
+  async signJWT(id: number) {
+    const payload = { sub: id };
     return {
       access_token: this.jwtService.sign(payload),
     };

@@ -35,18 +35,20 @@ export class TodosService {
     return todo
   }
 
-  async update(id: number, dto: UpdateTodoDto) {
+  async update(id: number, dto: UpdateTodoDto, userId: number) {
     let todo
     try {
-      todo = await this.repository.findOneByOrFail({ id })
+      todo = await this.repository.findOneOrFail({ where: { id, user: { id: userId } }, relations: ['user', 'category'] })
     } catch (e) {
       throw new BadRequestException('Todo is not exist')
     }
 
-    return await this.repository.update(id, {
+    console.log(todo)
+
+    return this.repository.update(id, {
       title: dto.title || todo.title,
       description: dto.description || todo.description,
-      isComplete: dto.isComplete ?? todo.isComplete,
+      isComplete: dto.isComplete || todo.isComplete,
       priority: dto.priority || todo.priority,
       category: { id: dto.categoryId } || todo.category.id
     })

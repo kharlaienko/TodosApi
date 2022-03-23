@@ -2,19 +2,20 @@ import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/commo
 import { TodosService } from './todos.service';
 import { CreateTodoDto } from './dto/create-todo.dto';
 import { UpdateTodoDto } from './dto/update-todo.dto';
+import { UserId } from 'src/decorators/userId.decorator';
 
 @Controller('todos')
 export class TodosController {
   constructor(private readonly todosService: TodosService) { }
 
   @Post()
-  create(@Body() dto: CreateTodoDto) {
-    return this.todosService.create(dto, 1);//TODO: GET ID FROM USER TOKEN
+  create(@Body() dto: CreateTodoDto, @UserId() id) {
+    return this.todosService.create(dto, id);
   }
 
   @Get()
-  findAllUsersTodo() {
-    return this.todosService.findAll(1);//TODO: GET ID FROM USER TOKEN
+  findAllUsersTodo(@UserId() id) {
+    return this.todosService.findAll(id);
   }
 
   @Get(':id')
@@ -23,8 +24,8 @@ export class TodosController {
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() dto: UpdateTodoDto) {
-    return this.todosService.update(+id, dto);
+  update(@Param('id') id: string, @Body() dto: UpdateTodoDto, @UserId() userid) {
+    return this.todosService.update(+id, dto, userid);
   }
 
   @Delete(':id')
