@@ -24,8 +24,8 @@ export class TodosController {
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() dto: UpdateTodoDto, @UserId() userid) {
-    return this.todosService.update(+id, dto, userid);
+  update(@Param('id') id: string, @Body() dto: UpdateTodoDto, @UserId() userId) {
+    return this.todosService.update(+id, dto, userId);
   }
 
   @Delete(':id')

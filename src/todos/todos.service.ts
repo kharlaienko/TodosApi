@@ -1,3 +1,4 @@
+import { UserEntity } from './../users/entities/user.entity';
 import { TodoEntity, TodoPriority } from './entities/todo.entity';
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -28,7 +29,7 @@ export class TodosService {
   async findOne(id: number) {
     let todo;
     try {
-      todo = await this.repository.findOneByOrFail({ id })
+      todo = await this.repository.findOneOrFail({ where: { id } })
     } catch (e) {
       throw new BadRequestException('Todo Is Not Exist')
     }
@@ -38,12 +39,18 @@ export class TodosService {
   async update(id: number, dto: UpdateTodoDto, userId: number) {
     let todo
     try {
-      todo = await this.repository.findOneOrFail({ where: { id, user: { id: userId } }, relations: ['user', 'category'] })
+      //todo = await this.repository.findOneOrFail({ where: { id, user: { id: userId } }, relations: ['user', 'category'] })
+      todo = await this.repository.createQueryBuilder('qb')
+        .select("todo").from(TodoEntity, "todo")
+        .leftJoinAndSelect('todo.user', 'user')
+        .leftJoinAndSelect('user.categories', 'category')
+        .where("todo.id = :todoId", { todoId: id })
+        .andWhere('user.id = :userId', { userId: userId })
+        .andWhere('category.id = :categoryId', { categoryId: dto.categoryId })
+        .getOneOrFail()
     } catch (e) {
-      throw new BadRequestException('Todo is not exist')
+      throw new BadRequestException('The oparation is not possible')
     }
-
-    console.log(todo)
 
     return this.repository.update(id, {
       title: dto.title || todo.title,

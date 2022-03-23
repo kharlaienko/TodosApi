@@ -1,3 +1,4 @@
+import { TodoEntity } from './../todos/entities/todo.entity';
 import { UserEntity } from './entities/user.entity';
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
@@ -31,7 +32,7 @@ export class UsersService {
   }
 
   async findOne(id: number) {
-    const user = await this.repository.findOne({ where: { 'id': id } })
+    const user = await this.repository.findOne({ where: { 'id': id }, relations: ['todos', 'categories'] })
     return user
   }
 
