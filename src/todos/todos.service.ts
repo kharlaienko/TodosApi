@@ -32,6 +32,10 @@ export class TodosService {
 
     qb.leftJoin('todo.user', 'user').where('user.id = :id')
 
+    if (dto.categoryId) {
+      qb.leftJoin('todo.category', 'category').where('category.id = :categoryId')
+    }
+
     if (dto.title) {
       qb.andWhere('todo.title ILIKE :title')
     }
@@ -47,10 +51,13 @@ export class TodosService {
       qb.andWhere('todo.priority = :priority')
     }
 
+    qb.orderBy('todo.createdAt', 'DESC')
+
     qb.setParameters({
       id: userId,
       title: `%${dto.title}%`,
       priority: dto.priority,
+      categoryId: dto.categoryId,
       isComplete: `${dto.isComplete}`
     })
 
@@ -77,9 +84,11 @@ export class TodosService {
       throw new BadRequestException('The oparation is not possible')
     }
 
+    const valueToUpdate = { ...dto }
+    delete valueToUpdate.categoryId
     return this.repository.update(id, {
-      ...dto,
-      category: { id: dto.categoryId } || todo.category.id
+      ...valueToUpdate,
+      category: { id: dto.categoryId || todo.category.id || null }
     })
   }
 

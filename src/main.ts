@@ -10,6 +10,9 @@ async function bootstrap() {
     forbidUnknownValues: true,
     stopAtFirstError: true,
     transform: true,
+    transformOptions: {
+      enableImplicitConversion: true
+    }
   }));
   await app.listen(7777);
 }
