@@ -1,20 +1,13 @@
-import { TodoEntity, TodoPriority } from './../entities/todo.entity';
+import { CreateTodoDto } from './create-todo.dto';
+import { TodoPriority } from './../entities/todo.entity';
 import { PartialType } from '@nestjs/mapped-types';
-import { IsBoolean, IsNumber, IsOptional, IsString, Length, Matches } from 'class-validator';
+import { IsBoolean, IsNumber, IsOptional, IsString, Matches } from 'class-validator';
+import { ToBoolean } from 'src/decorators/to-bool.decorator';
 
-export class UpdateTodoDto extends PartialType(TodoEntity) {
-   @IsOptional()
-   @IsString()
-   @Length(3, 255)
-   title?: string
-
-   @IsOptional()
-   @IsString()
-   @Length(3)
-   description?: string;
-
+export class UpdateTodoDto extends PartialType(CreateTodoDto) {
    @IsOptional()
    @IsBoolean()
+   @ToBoolean()
    isComplete?: boolean;
 
    @IsOptional()

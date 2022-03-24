@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, ParseIntPipe, Query, ParseBoolPipe } from '@nestjs/common';
 import { TodosService } from './todos.service';
 import { CreateTodoDto } from './dto/create-todo.dto';
 import { UpdateTodoDto } from './dto/update-todo.dto';
@@ -14,22 +14,30 @@ export class TodosController {
   }
 
   @Get()
-  findAllUsersTodo(@UserId() id) {
+  findAllUsersTodo(@UserId() id: number) {
     return this.todosService.findAll(id);
   }
 
+  @Get('/search')
+  search(
+    @UserId() id: number,
+    @Query() dto: UpdateTodoDto
+  ) {
+    return this.todosService.search(id, dto);
+  }
+
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.todosService.findOne(+id);
+  findOne(@Param('id', ParseIntPipe) id: number, @UserId() userId: number) {
+    return this.todosService.findOne(id, userId);
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() dto: UpdateTodoDto, @UserId() userId) {
-    return this.todosService.update(+id, dto, userId);
+  update(@Param('id', ParseIntPipe) id: number, @Body() dto: UpdateTodoDto, @UserId() userId) {
+    return this.todosService.update(id, dto, userId);
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.todosService.remove(+id);
+  remove(@Param('id', ParseIntPipe) id: number) {
+    return this.todosService.remove(id);
   }
 }

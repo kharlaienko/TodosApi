@@ -1,3 +1,4 @@
+import { UserId } from 'src/decorators/userId.decorator';
 import { UserEntity } from './../users/entities/user.entity';
 import { TodoEntity, TodoPriority } from './entities/todo.entity';
 import { BadRequestException, Injectable } from '@nestjs/common';
@@ -16,20 +17,51 @@ export class TodosService {
   create(dto: CreateTodoDto, userId: number) {
     return this.repository.save({
       user: { id: userId },
-      title: dto.title,
-      description: dto.description || null,
-      priority: dto.priority || TodoPriority.LOW,
+      ...dto
     })
   }
 
   findAll(userId: number) {
+
     return this.repository.find({ where: { user: { id: userId } } })
   }
 
-  async findOne(id: number) {
+  async search(userId: number, dto: UpdateTodoDto) {
+
+    const qb = this.repository.createQueryBuilder('todo')
+
+    qb.leftJoin('todo.user', 'user').where('user.id = :id')
+
+    if (dto.title) {
+      qb.andWhere('todo.title ILIKE :title')
+    }
+
+    if (dto.priority) {
+      qb.andWhere('todo.priority ILIKE :priority')
+    }
+
+    if (dto.isComplete) {
+      qb.andWhere('todo.isComplete = :isComplete')
+    }
+    if (dto.priority) {
+      qb.andWhere('todo.priority = :priority')
+    }
+
+    qb.setParameters({
+      id: userId,
+      title: `%${dto.title}%`,
+      priority: dto.priority,
+      isComplete: `${dto.isComplete}`
+    })
+
+    const [items, count] = await qb.getManyAndCount()
+    return { items, count }
+  }
+
+  async findOne(id: number, userId) {
     let todo;
     try {
-      todo = await this.repository.findOneOrFail({ where: { id } })
+      todo = await this.repository.findOneOrFail({ where: { id, user: { id: userId } } })
     } catch (e) {
       throw new BadRequestException('Todo Is Not Exist')
     }
@@ -40,23 +72,13 @@ export class TodosService {
     let todo
     try {
       //todo = await this.repository.findOneOrFail({ where: { id, user: { id: userId } }, relations: ['user', 'category'] })
-      todo = await this.repository.createQueryBuilder('qb')
-        .select("todo").from(TodoEntity, "todo")
-        .leftJoinAndSelect('todo.user', 'user')
-        .leftJoinAndSelect('user.categories', 'category')
-        .where("todo.id = :todoId", { todoId: id })
-        .andWhere('user.id = :userId', { userId: userId })
-        .andWhere('category.id = :categoryId', { categoryId: dto.categoryId })
-        .getOneOrFail()
+      todo = await this.repository.find({ where: { id, user: { id: userId } } })
     } catch (e) {
       throw new BadRequestException('The oparation is not possible')
     }
 
     return this.repository.update(id, {
-      title: dto.title || todo.title,
-      description: dto.description || todo.description,
-      isComplete: dto.isComplete || todo.isComplete,
-      priority: dto.priority || todo.priority,
+      ...dto,
       category: { id: dto.categoryId } || todo.category.id
     })
   }
